@@ -22,6 +22,9 @@ func main() {
 	// })
 	// failOnError(err, "Could not insert the movie")
 
+	err = r.Update(&movie.Movie{ID: 1, Name: "Suicide Squad"})
+	failOnError(err, "Could not update the movie")
+
 	data, err := r.FindAll()
 	failOnError(err, "Failed to fetch movies")
 	j, err := json.MarshalIndent(data, "", "\t")
