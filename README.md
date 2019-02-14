@@ -8,9 +8,10 @@ Using Docker, just run:
 
 ```sh
 docker-compose up -d
+cd cmd/go-repository
 ```
 Then:
 
 ```go
-go run *.go
+go run main.go
 ```
