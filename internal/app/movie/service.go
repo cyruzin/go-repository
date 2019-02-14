@@ -1,4 +1,4 @@
-package main
+package movie
 
 import (
 	"database/sql"
@@ -22,20 +22,21 @@ type ReadRepository interface {
 type WriteRepository interface {
 	Add(r *Movie) error
 	Remove(id int64) error
+	Update(id int64) error
 }
 
-// MovieRepository ...
-type MovieRepository struct {
+// Repository ...
+type Repository struct {
 	db *sqlx.DB
 }
 
 // NewMovieRepository ...
-func NewMovieRepository(db *sqlx.DB) *MovieRepository {
-	return &MovieRepository{db}
+func NewMovieRepository(db *sqlx.DB) *Repository {
+	return &Repository{db}
 }
 
 // FindAll ...
-func (r *MovieRepository) FindAll() ([]*Movie, error) {
+func (r *Repository) FindAll() ([]*Movie, error) {
 	var movies []*Movie
 
 	err := r.db.Select(&movies, `SELECT * FROM movie`)
@@ -47,7 +48,7 @@ func (r *MovieRepository) FindAll() ([]*Movie, error) {
 }
 
 // FindOneByID ...
-func (r *MovieRepository) FindOneByID(id int64) (*Movie, error) {
+func (r *Repository) FindOneByID(id int64) (*Movie, error) {
 	var movie *Movie
 
 	err := r.db.Get(&movie, `SELECT * FROM movie WHERE id = $1`, id)
@@ -56,8 +57,10 @@ func (r *MovieRepository) FindOneByID(id int64) (*Movie, error) {
 }
 
 // Add ...
-func (r *MovieRepository) Add(m *Movie) error {
-	if _, err := r.db.NamedExec(`INSERT INTO movie VALUES (:id, :name)`, m); err != nil {
+func (r *Repository) Add(m *Movie) error {
+	if _, err := r.db.NamedExec(`
+		INSERT INTO movie VALUES (:id, :name)
+	`, m); err != nil {
 		return err
 	}
 
@@ -65,7 +68,7 @@ func (r *MovieRepository) Add(m *Movie) error {
 }
 
 // Remove ...
-func (r *MovieRepository) Remove(id int64) error {
+func (r *Repository) Remove(id int64) error {
 	if _, err := r.db.Exec("DELETE FROM movie WHERE id = $1", id); err != nil {
 		return err
 	}

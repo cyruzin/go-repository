@@ -1,6 +1,8 @@
 mysql:
     image: mysql:5.7
     container_name: api-repository
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/
     ports: 
       - 3306:3306
     environment:

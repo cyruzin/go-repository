@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/cyruzin/go-repository/internal/app/movie"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )
@@ -14,10 +15,12 @@ func main() {
 	failOnError(err, "Failed to connect to DB")
 	defer db.Close()
 
-	r := NewMovieRepository(db)
+	r := movie.NewMovieRepository(db)
 
-	err = r.Add(&Movie{Name: "Batman"})
-	failOnError(err, "Could not insert the movie")
+	// err = r.Add(&movie.Movie{
+	// 	Name: "Batman",
+	// })
+	// failOnError(err, "Could not insert the movie")
 
 	data, err := r.FindAll()
 	failOnError(err, "Failed to fetch movies")
