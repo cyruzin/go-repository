@@ -1,4 +1,4 @@
-package movie
+package model
 
 import (
 	"database/sql"
@@ -25,18 +25,18 @@ type WriteRepository interface {
 	Update(id int64) error
 }
 
-// Repository type is a struct for
-type Repository struct {
+// MovieRepository type is a struct for
+type MovieRepository struct {
 	db *sqlx.DB
 }
 
 // NewMovieRepository initiate the service.
-func NewMovieRepository(db *sqlx.DB) *Repository {
-	return &Repository{db}
+func NewMovieRepository(db *sqlx.DB) *MovieRepository {
+	return &MovieRepository{db}
 }
 
 // FindAll func retrieves all movies.
-func (r *Repository) FindAll() ([]*Movie, error) {
+func (r *MovieRepository) FindAll() ([]*Movie, error) {
 	var movies []*Movie
 	err := r.db.Select(&movies, `SELECT id,name FROM movie`)
 	if err != nil && err != sql.ErrNoRows {
@@ -46,7 +46,7 @@ func (r *Repository) FindAll() ([]*Movie, error) {
 }
 
 // FindOneByID func finds a movie by a given ID.
-func (r *Repository) FindOneByID(id int64) (*Movie, error) {
+func (r *MovieRepository) FindOneByID(id int64) (*Movie, error) {
 	var movie *Movie
 
 	err := r.db.Get(&movie, `SELECT id,name FROM movie WHERE id = $1`, id)
@@ -54,7 +54,7 @@ func (r *Repository) FindOneByID(id int64) (*Movie, error) {
 }
 
 // Add func add a new movie.
-func (r *Repository) Add(m *Movie) error {
+func (r *MovieRepository) Add(m *Movie) error {
 	if _, err := r.db.NamedExec(`INSERT INTO movie VALUES (:id, :name)`, m); err != nil {
 		return err
 	}
@@ -62,7 +62,7 @@ func (r *Repository) Add(m *Movie) error {
 }
 
 // Update func updates the given movie.
-func (r *Repository) Update(m *Movie) error {
+func (r *MovieRepository) Update(m *Movie) error {
 	if _, err := r.db.NamedExec(`UPDATE movie SET name=:name WHERE id=:id`, m); err != nil {
 		return err
 	}
@@ -70,7 +70,7 @@ func (r *Repository) Update(m *Movie) error {
 }
 
 // Remove func removes a movie by a given ID.
-func (r *Repository) Remove(id int64) error {
+func (r *MovieRepository) Remove(id int64) error {
 	if _, err := r.db.Exec(`DELETE FROM movie WHERE id = $1`, id); err != nil {
 		return err
 	}

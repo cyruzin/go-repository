@@ -2,10 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
+	"net/http"
 
-	"github.com/cyruzin/go-repository/internal/app/movie"
+	"github.com/cyruzin/go-repository/internal/app/model"
+	"github.com/go-chi/chi"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )
@@ -15,21 +16,24 @@ func main() {
 	failOnError(err, "Failed to connect to DB")
 	defer db.Close()
 
-	r := movie.NewMovieRepository(db)
+	mr := model.NewMovieRepository(db)
 
-	// err = r.Add(&movie.Movie{
-	// 	Name: "Batman",
-	// })
-	// failOnError(err, "Could not insert the movie")
+	r := chi.NewRouter()
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("welcome"))
+	})
 
-	err = r.Update(&movie.Movie{ID: 1, Name: "Suicide Squad"})
-	failOnError(err, "Could not update the movie")
+	r.Get("/movies", func(w http.ResponseWriter, r *http.Request) {
+		data, err := mr.FindAll()
+		if err != nil {
+			json.NewEncoder(w).Encode(err)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(data)
+	})
 
-	data, err := r.FindAll()
-	failOnError(err, "Failed to fetch movies")
-	j, err := json.MarshalIndent(data, "", "\t")
-	failOnError(err, "Could not marshall movie response")
-	fmt.Println(string(j))
+	http.ListenAndServe(":8000", r)
 }
 
 func failOnError(err error, msg string) {
