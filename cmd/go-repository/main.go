@@ -17,7 +17,7 @@ func main() {
 	defer db.Close()
 
 	mr := model.NewMovieRepository(db)
-	ms := handler.NewMovieService(mr)
+	ms := handler.NewMovie(mr)
 
 	r := chi.NewRouter()
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
