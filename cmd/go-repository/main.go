@@ -1,10 +1,10 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 
+	"github.com/cyruzin/go-repository/internal/app/handler"
 	"github.com/cyruzin/go-repository/internal/app/model"
 	"github.com/go-chi/chi"
 	_ "github.com/go-sql-driver/mysql"
@@ -17,21 +17,14 @@ func main() {
 	defer db.Close()
 
 	mr := model.NewMovieRepository(db)
+	mv := handler.NewMovieHandler(mr)
 
 	r := chi.NewRouter()
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("welcome"))
 	})
 
-	r.Get("/movies", func(w http.ResponseWriter, r *http.Request) {
-		data, err := mr.FindAll()
-		if err != nil {
-			json.NewEncoder(w).Encode(err)
-			return
-		}
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(data)
-	})
+	r.Get("/movies", mv.FindAll)
 
 	http.ListenAndServe(":8000", r)
 }
