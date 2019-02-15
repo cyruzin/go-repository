@@ -7,18 +7,18 @@ import (
 	"github.com/cyruzin/go-repository/internal/app/model"
 )
 
-// MovieHandler ...
-type MovieHandler struct {
+// MovieService ...
+type MovieService struct {
 	r *model.MovieRepository
 }
 
-// NewMovieHandler ...
-func NewMovieHandler(r *model.MovieRepository) *MovieHandler {
-	return &MovieHandler{r}
+// NewMovieService ...
+func NewMovieService(r *model.MovieRepository) *MovieService {
+	return &MovieService{r}
 }
 
 // FindAll ...
-func (mh MovieHandler) FindAll(w http.ResponseWriter, r *http.Request) {
+func (mh MovieService) FindAll(w http.ResponseWriter, r *http.Request) {
 	data, err := mh.r.FindAll()
 	if err != nil {
 		json.NewEncoder(w).Encode(err)

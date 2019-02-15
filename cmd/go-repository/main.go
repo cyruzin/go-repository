@@ -17,14 +17,14 @@ func main() {
 	defer db.Close()
 
 	mr := model.NewMovieRepository(db)
-	mv := handler.NewMovieHandler(mr)
+	ms := handler.NewMovieService(mr)
 
 	r := chi.NewRouter()
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("welcome"))
 	})
 
-	r.Get("/movies", mv.FindAll)
+	r.Get("/movies", ms.FindAll)
 
 	http.ListenAndServe(":8000", r)
 }
