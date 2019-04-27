@@ -25,7 +25,7 @@ type WriteRepository interface {
 	Update(id int64) error
 }
 
-// MovieRepository type is a struct for
+// MovieRepository type is a struct for movies repository.
 type MovieRepository struct {
 	db *sqlx.DB
 }
